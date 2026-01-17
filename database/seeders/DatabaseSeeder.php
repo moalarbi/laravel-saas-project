@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Plan;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +15,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // Create Roles
+        $adminRole = Role::create(['name' => 'admin']);
+        $userRole = Role::create(['name' => 'user']);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Create Admin User
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+        ]);
+        $admin->assignRole($adminRole);
+
+        // Create Regular User
+        $user = User::create([
+            'name' => 'Regular User',
+            'email' => 'user@example.com',
+            'password' => Hash::make('password'),
+        ]);
+        $user->assignRole($userRole);
+
+        // Create Plans
+        Plan::create([
+            'name' => 'Basic Plan',
+            'slug' => 'basic-plan',
+            'stripe_plan' => 'price_basic_id',
+            'price' => 10,
+            'description' => 'Basic features for individuals',
+        ]);
+
+        Plan::create([
+            'name' => 'Premium Plan',
+            'slug' => 'premium-plan',
+            'stripe_plan' => 'price_premium_id',
+            'price' => 29,
+            'description' => 'Advanced features for professionals',
+        ]);
     }
 }
